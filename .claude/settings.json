@@ -1,0 +1,18 @@
+{
+  "enabledMcpjsonServers": ["oostervelde"],
+  "permissions": {
+    "allow": [
+      "mcp__oostervelde__ping",
+      "mcp__oostervelde__list_invoices",
+      "mcp__oostervelde__get_invoice",
+      "mcp__oostervelde__get_price",
+      "mcp__oostervelde__get_work_order",
+      "mcp__oostervelde__get_contract_rule",
+      "mcp__oostervelde__find_duplicates",
+      "mcp__oostervelde__check_invoice",
+      "mcp__oostervelde__get_run_totals",
+      "mcp__oostervelde__get_decisions",
+      "Edit(/output/**)"
+    ]
+  }
+}
