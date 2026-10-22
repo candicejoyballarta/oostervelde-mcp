@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "oostervelde": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["--import", "tsx", "src/server.ts"]
+    }
+  }
+}
