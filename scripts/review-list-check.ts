@@ -76,5 +76,15 @@ check("every invoice appears in the CSV", missing.length === 0, missing.join(", 
 const wrongVerdict = rows.slice(1).filter((r) => proposed.get(r[0]) !== r[4]).map((r) => r[0]);
 check("every CSV row has the proposed verdict from get_run_totals", wrongVerdict.length === 0, [...new Set(wrongVerdict)].join(", "));
 
+// README "Results at a glance": every number must match the output files.
+const readme = fs.readFileSync(path.join(OUTPUT_DIR, "..", "README.md"), "utf8");
+const comparison = fs.readFileSync(path.join(OUTPUT_DIR, "sanne-comparison.md"), "utf8");
+const readmeAmounts = [...new Set(readme.match(EURO) ?? [])];
+const notInOutput = readmeAmounts.filter((a) => !md.includes(a) && !comparison.includes(a));
+check(`all ${readmeAmounts.length} euro amounts in README.md appear in the output files`, notInOutput.length === 0, notInOutput.join(", "));
+check("README.md shows 20 dispute · 3 hold · 17 approve", readme.includes("20 dispute · 3 hold · 17 approve"));
+const comparisonSummary = comparison.match(/\*\*(\d+ of \d+ agree on the verdict; \d+ of those also on the amount)\.\*\*/)?.[1];
+check("README.md shows the comparison summary", !!comparisonSummary && readme.includes(comparisonSummary), comparisonSummary);
+
 console.log(failures === 0 ? "\nAll checks passed." : `\n${failures} check(s) FAILED.`);
 process.exitCode = failures === 0 ? 0 : 1;

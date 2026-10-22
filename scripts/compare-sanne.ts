@@ -370,6 +370,14 @@ md.push(
   "",
 );
 
-fs.writeFileSync(OUTPUT_FILE, md.join("\n"));
+// Leave the file alone when only line endings would change (git may check it out with CRLF on Windows).
+const report = md.join("\n");
+const existing = fs.existsSync(OUTPUT_FILE) ? fs.readFileSync(OUTPUT_FILE, "utf8").replace(/\r\n/g, "\n") : null;
+const target = path.relative(process.cwd(), OUTPUT_FILE);
 console.log(summary);
-console.log(`Wrote ${path.relative(process.cwd(), OUTPUT_FILE)} (${differences.length} differences explained).`);
+if (existing === report) {
+  console.log(`${target} is up to date (${differences.length} differences explained).`);
+} else {
+  fs.writeFileSync(OUTPUT_FILE, report);
+  console.log(`Wrote ${target} (${differences.length} differences explained).`);
+}
