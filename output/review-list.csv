@@ -1,0 +1,43 @@
+invoice_file,invoice_no,supplier,work_order,proposed_verdict,label,rule,line_no,summary,billed_eur,expected_eur,dispute_excl_vat_eur,dispute_incl_vat_eur
+h-2026-0057.txt,2026-0057,Hoekstra,WO-26-1014,dispute,Needs your judgement,4.1,1,"""Koperen leiding 15 mm"" is billed above the contract price for H05.",290.00,268.32,21.68,26.23
+h-2026-0058.txt,2026-0058,Hoekstra,WO-26-1040,dispute,Needs your judgement,4.3,4,"Call-out fee charged a second time; a spoed work order gets at most one call-out fee.",46.44,0.00,46.44,56.20
+h-2026-0061.txt,2026-0061,Hoekstra,WO-26-1024,hold,Needs your judgement,4.6,,"VAT is € 50,28 too low; a corrected invoice is needed (not part of the dispute).",37.71,,0.00,0.00
+w-DW26-013.txt,DW26-013,De Wit,WO-26-1099,hold,Needs your judgement,4.9,,"Work order WO-26-1099 is not in the work-order export, so the invoice can't be paid until the job is confirmed.",489.47,,0.00,0.00
+w-DW26-015.txt,DW26-015,De Wit,WO-26-1035,hold,Needs your judgement,4.6,,"VAT is € 90,28 too low; a corrected invoice is needed (not part of the dispute).",101.68,,0.00,0.00
+b-B-26-0140.txt,B-26-0140,Bosman,WO-26-1020,dispute,Needs your judgement,4.7,4,"""Vogelwering dakgoot"" is not on the price list and not marked as meerwerk, and there is no prior approval for it.",58.50,0.00,58.50,70.79
+j-F26-0019.txt,F26-0019,Jansen,WO-26-1013,dispute,Needs your judgement,4.8,,"This invoice repeats F26-0001 for the same work order WO-26-1013; a work order is invoiced only once.",1698.84,0.00,1404.00,1698.84
+h-2026-0038.txt,2026-0038,Hoekstra,WO-26-1004,dispute,"Rule-based, ready to send",4.2,1,"Work was done on 2025-12-17, so the 2025 price applies, but a higher price was billed.",596.50,578.00,18.50,22.38
+h-2026-0038.txt,2026-0038,Hoekstra,WO-26-1004,dispute,"Rule-based, ready to send",4.2,2,"Work was done on 2025-12-17, so the 2025 price applies, but a higher price was billed.",181.11,175.50,5.61,6.79
+h-2026-0040.txt,2026-0040,Hoekstra,WO-26-1021,dispute,"Rule-based, ready to send",4.2,1,"Work was done on 2025-12-22, so the 2025 price applies, but a higher price was billed.",2528.40,2450.00,78.40,94.86
+h-2026-0044.txt,2026-0044,Hoekstra,WO-26-1007,dispute,"Rule-based, ready to send",4.4,2,"8 labour hours billed, but only 6 are allowed on work order WO-26-1007.",482.96,362.22,120.74,146.10
+h-2026-0052.txt,2026-0052,Hoekstra,WO-26-1036,dispute,"Rule-based, ready to send",arithmetic,,"The invoice total is higher than subtotal + VAT.",510.20,410.20,0.00,100.00
+w-DW26-002.txt,DW26-002,De Wit,WO-26-1030,dispute,"Rule-based, ready to send",4.6,1,"VAT charged at 21% where 9% applies.",102.90,44.10,0.00,58.80
+w-DW26-011.txt,DW26-011,De Wit,WO-26-1008,dispute,"Rule-based, ready to send",4.6,1,"VAT charged at 21% where 9% applies.",106.20,45.51,0.00,60.68
+w-DW26-016.txt,DW26-016,De Wit,WO-26-1017,dispute,"Rule-based, ready to send",arithmetic,2,"The line amount is higher than quantity × unit price.",232.90,222.90,10.00,10.90
+w-DW26-018.txt,DW26-018,De Wit,WO-26-1022,dispute,"Rule-based, ready to send",4.4,1,"14 labour hours billed, but only 12 are allowed on work order WO-26-1022.",707.98,606.84,101.14,110.24
+b-B-26-0089.txt,B-26-0089,Bosman,WO-26-1038,dispute,"Rule-based, ready to send",4.2,1,"Work was done on 2025-12-15, so the 2025 price applies, but a higher price was billed.",1176.60,1140.00,36.60,44.29
+b-B-26-0102.txt,B-26-0102,Bosman,WO-26-1005,dispute,"Rule-based, ready to send",4.3,4,"Call-out fee charged on a regular (regulier) work order; only emergency (spoed) work orders get call-out fees.",46.44,0.00,46.44,56.19
+b-B-26-0127.txt,B-26-0127,Bosman,WO-26-1034,dispute,"Rule-based, ready to send",4.4,2,"10 labour hours billed, but only 9 are allowed on work order WO-26-1034.",639.80,575.82,63.98,77.42
+b-B-26-0131.txt,B-26-0131,Bosman,WO-26-1015,dispute,"Rule-based, ready to send",4.5,4,"Meerwerk exceeds approval GA-0419; only the approved € 400,00 is paid.",640.00,400.00,240.00,290.40
+b-B-26-0144.txt,B-26-0144,Bosman,WO-26-1029,dispute,"Rule-based, ready to send",4.1,2,"""Arbeid dakdekker"" is billed above the contract price for B01.",462.00,447.86,14.14,17.11
+j-F26-0016.txt,F26-0016,Jansen,WO-26-1023,dispute,"Rule-based, ready to send",4.1,1,"""Groepenkast 8 groepen vervangen"" is billed above the contract price for J02.",1245.00,1217.76,27.24,32.96
+j-F26-0021.txt,F26-0021,Jansen,WO-26-1019,dispute,"Rule-based, ready to send",4.3,3,"Call-out fee charged on a regular (regulier) work order; only emergency (spoed) work orders get call-out fees.",46.44,0.00,46.44,56.19
+j-F26-0024.txt,F26-0024,Jansen,WO-26-1028,dispute,"Rule-based, ready to send",4.5,3,"Meerwerk of € 310,00 is above € 250,00 without a GA approval, so none of it is paid, not even the first € 250,00.",310.00,0.00,310.00,375.10
+h-2026-0031.txt,2026-0031,Hoekstra,WO-26-1001,approve,,,,,,,,
+h-2026-0035.txt,2026-0035,Hoekstra,WO-26-1018,approve,,,,,,,,
+h-2026-0049.txt,2026-0049,Hoekstra,WO-26-1011,approve,,4.3,2,"Call-out fee charged on a regular (regulier) work order; only emergency (spoed) work orders get call-out fees. (resolved by credit note 2026-C003)",46.44,0.00,,
+h-2026-0049.txt,2026-0049,Hoekstra,WO-26-1011,approve,,4.8,,"Credit note 2026-C003 cancels the disputed € 56,19 exactly; nothing left to dispute.",56.19,56.19,,
+h-2026-C003.txt,2026-C003,Hoekstra,WO-26-1011,approve,,4.8,,"Credit note for invoice 2026-0049 of € 56,19; it cancels the € 56,19 disputed on 2026-0049 exactly.",-56.19,-56.19,,
+h-2026-0050.txt,2026-0050,Hoekstra,WO-26-1032,approve,,,,,,,,
+h-2026-0063.txt,2026-0063,Hoekstra,WO-26-1027,approve,,4.5,,"Meerwerk of € 180,00 is within the € 250,00 that needs no approval.",180.00,180.00,,
+w-DW26-004.txt,DW26-004,De Wit,WO-26-1002,approve,,,,,,,,
+w-DW26-009.txt,DW26-009,De Wit,WO-26-1006,approve,,4.5,,"Meerwerk of € 385,00 is covered by approval GA-0412.",385.00,385.00,,
+w-DW26-014.txt,DW26-014,De Wit,WO-26-1012,approve,,4.4,,"20 hours billed, which is within the maximum plus approval MU-0233.",,,,
+w-DW26-017.txt,DW26-017,De Wit,WO-26-1039,approve,,,,,,,,
+b-B-26-0097.txt,B-26-0097,Bosman,WO-26-1010,approve,,,,,,,,
+b-B-26-0099.txt,B-26-0099,Bosman,WO-26-1025,approve,,,,,,,,
+j-F26-0001.txt,F26-0001,Jansen,WO-26-1013,approve,,4.8,,"Work order WO-26-1013 is also billed on F26-0019; this is the earliest invoice, so it is treated as the original.",1698.84,1698.84,,
+j-F26-0007.txt,F26-0007,Jansen,WO-26-1003,approve,,,,,,,,
+j-F26-0010.txt,F26-0010,Jansen,WO-26-1033,approve,,,,,,,,
+j-F26-0012.txt,F26-0012,Jansen,WO-26-1009,approve,,,,,,,,
+j-F26-0018.txt,F26-0018,Jansen,WO-26-1037,approve,,,,,,,,

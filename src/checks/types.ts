@@ -14,6 +14,9 @@ export type Finding = {
   disputeExclVatCents: number;
   disputeInclVatCents: number;
   evidence: string[];
+  lineDescription?: string | null; // the line's text as invoiced; set by check_invoice
+  originalInvoiceNo?: string; // 4.8 duplicates: the invoice treated as the original
+  originalInvoiceDateNl?: string; // its invoice date for Dutch letters, "2 januari 2026"
 };
 
 /**
@@ -45,6 +48,10 @@ export type CheckResult = {
   invoiceNo: string;
   workOrder: string;
   supplier: Invoice["supplier"];
+  invoiceDate: string;
+  invoiceDateNl: string; // "27 januari 2026", for Dutch letters
+  executionDateNl: string; // date the work was done, "17 december 2025"
+  address: string;
   billedTotalCents: number;
   correctedTotalCents: number;
   creditedCents: number; // already corrected by credit notes referencing this invoice

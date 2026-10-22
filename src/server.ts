@@ -9,6 +9,9 @@ import { getWorkOrder } from "./lib/workOrders.js";
 import { getContractRule } from "./lib/contract.js";
 import { findDuplicates } from "./lib/duplicates.js";
 import { checkInvoice } from "./checks/index.js";
+import { getRunTotals } from "./checks/runTotals.js";
+import { getDecisions, recordDecision, VERDICTS } from "./lib/decisions.js";
+import { withEuros } from "./lib/money.js";
 
 // Runs a lookup and returns its result as pretty JSON, or a thrown error as isError.
 function jsonResult(lookup: () => unknown) {
@@ -181,7 +184,7 @@ server.registerTool(
   {
     description:
       "Check one invoice against contract Article 4. Returns findings (dispute / hold / info) with evidence, " +
-      "and billed vs corrected totals. Amounts are integer cents; disputeTotalCents is incl. VAT. " +
+      "and billed vs corrected totals. Amounts are integer cents with euro strings (xEur); disputeTotalCents is incl. VAT. " +
       "It does not decide the verdict.",
     inputSchema: {
       file: z
@@ -195,8 +198,44 @@ server.registerTool(
       if (!listInvoiceFiles().includes(file)) {
         throw new Error(`Unknown invoice file "${file}". Call list_invoices to see the available file names.`);
       }
-      return checkInvoice(file);
+      return withEuros(checkInvoice(file));
     }),
+);
+
+server.registerTool(
+  "get_run_totals",
+  {
+    description:
+      "Checks all invoices: dispute totals (overall, per supplier), proposed verdict per invoice " +
+      "(hold > dispute > approve) and counts. Amounts are integer cents with euro strings (xEur).",
+    inputSchema: {},
+  },
+  async () => jsonResult(() => withEuros(getRunTotals())),
+);
+
+server.registerTool(
+  "record_decision",
+  {
+    description:
+      "Log Sanne's final verdict on one invoice (append-only). " +
+      "Only call this when the user explicitly states a decision; never on your own initiative.",
+    inputSchema: {
+      file: z.string().describe("Invoice file name from list_invoices, e.g. 'h-2026-0058.txt'"),
+      verdict: z.enum(VERDICTS),
+      reason: z.string().min(1).describe("Sanne's reason, in her words"),
+      decidedBy: z.string().default("Sanne"),
+    },
+  },
+  async (input) => jsonResult(() => recordDecision(input)),
+);
+
+server.registerTool(
+  "get_decisions",
+  {
+    description: "Sanne's latest decision per invoice, with how many earlier decisions it replaces.",
+    inputSchema: {},
+  },
+  async () => jsonResult(() => ({ decisions: getDecisions() })),
 );
 
 await server.connect(new StdioServerTransport());

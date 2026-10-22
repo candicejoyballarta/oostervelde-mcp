@@ -1,5 +1,6 @@
 import { findDuplicates } from "../lib/duplicates.js";
 import { formatCents } from "../lib/money.js";
+import { isoToDutchLong } from "../lib/dates.js";
 import type { Invoice } from "../types.js";
 import type { Finding } from "./types.js";
 
@@ -38,6 +39,7 @@ export function checkDuplicate(invoice: Invoice): { findings: Finding[]; fullDup
     };
   }
 
+  const originalRef = { originalInvoiceNo: original.invoiceNo, originalInvoiceDateNl: isoToDutchLong(original.invoiceDate) };
   const me = group.invoices.find((inv) => inv.file === invoice.file)!;
   if (me.identicalLines) {
     return {
@@ -53,6 +55,7 @@ export function checkDuplicate(invoice: Invoice): { findings: Finding[]; fullDup
           disputeExclVatCents: invoice.subtotalCents,
           disputeInclVatCents: invoice.totalCents,
           evidence: [...evidence, `Same lines as ${original.invoiceNo}: codes, quantities and amounts identical`],
+          ...originalRef,
         },
       ],
     };
@@ -71,6 +74,7 @@ export function checkDuplicate(invoice: Invoice): { findings: Finding[]; fullDup
         disputeExclVatCents: 0,
         disputeInclVatCents: 0,
         evidence,
+        ...originalRef,
       },
     ],
   };

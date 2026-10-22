@@ -1,4 +1,5 @@
-// All date helpers return ISO "yyyy-mm-dd", or null when the text doesn't fit.
+// The parsing helpers return ISO "yyyy-mm-dd", or null when the text doesn't fit.
+// isoToDutchLong goes the other way, for Dutch letter text.
 
 const DUTCH_MONTHS: Record<string, number> = {
   januari: 1,
@@ -36,6 +37,14 @@ export function dutchLongDateToIso(text: string): string | null {
   const month = DUTCH_MONTHS[match[2].toLowerCase()];
   if (!month) return null;
   return toIso(Number(match[3]), month, Number(match[1]));
+}
+
+/** "2026-01-27" → "27 januari 2026". Throws on anything that isn't ISO. */
+export function isoToDutchLong(iso: string): string {
+  const match = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const month = match ? Object.keys(DUTCH_MONTHS)[Number(match[2]) - 1] : undefined;
+  if (!match || !month) throw new Error(`Not an ISO date: "${iso}"`);
+  return `${Number(match[3])} ${month} ${match[1]}`;
 }
 
 /** "2026-01-12" → "2026-01-12" (validates it is already ISO). */

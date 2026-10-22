@@ -1,6 +1,7 @@
 import { listInvoiceFiles, parseInvoice } from "../parsers/index.js";
 import { formatCents, roundDiv } from "../lib/money.js";
 import { getWorkOrder } from "../lib/workOrders.js";
+import { isoToDutchLong } from "../lib/dates.js";
 import type { Invoice } from "../types.js";
 import type { CheckContext, CheckResult, Finding, RuleFinding } from "./types.js";
 import { checkWorkOrder } from "./workOrder.js";
@@ -99,16 +100,23 @@ function finish(invoice: Invoice, correctedTotal: number, findings: Finding[]): 
     );
   }
 
+  const describe = (lineNo: number | null) =>
+    invoice.lines.find((l) => l.lineNo === lineNo)?.description ?? null;
+
   return {
     file: invoice.file,
     invoiceNo: invoice.invoiceNo,
     workOrder: invoice.workOrder,
     supplier: invoice.supplier,
+    invoiceDate: invoice.invoiceDate,
+    invoiceDateNl: isoToDutchLong(invoice.invoiceDate),
+    executionDateNl: isoToDutchLong(invoice.executionDate),
+    address: invoice.address,
     billedTotalCents: invoice.totalCents,
     correctedTotalCents: correctedTotal,
     creditedCents: 0,
     disputeTotalCents: disputeTotal,
-    findings,
+    findings: findings.map((f) => ({ ...f, lineDescription: describe(f.lineNo) })),
     reconciles: sum() === disputeTotal,
   };
 }

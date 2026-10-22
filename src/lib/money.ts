@@ -54,3 +54,35 @@ export function formatCents(cents: number): string {
   const rest = String(abs % 100).padStart(2, "0");
   return `${sign}€ ${euros},${rest}`;
 }
+
+/** 341247 → "€3,412.47" (English notation). */
+export function formatCentsEn(cents: number): string {
+  const sign = cents < 0 ? "-" : "";
+  const abs = Math.abs(cents);
+  const euros = String(Math.floor(abs / 100)).replace(/\B(?=(\d{3})+$)/g, ",");
+  const rest = String(abs % 100).padStart(2, "0");
+  return `${sign}€${euros}.${rest}`;
+}
+
+export type EuroStrings = { nl: string; en: string; csv: string };
+
+/** 341247 → { nl: "€ 3.412,47", en: "€3,412.47", csv: "3412.47" }. */
+export function euroStrings(cents: number): EuroStrings {
+  return { nl: formatCents(cents), en: formatCentsEn(cents), csv: centsToDecimal(cents) };
+}
+
+/**
+ * Copies a tool result and adds `xEur` next to every numeric `xCents` key, so
+ * Claude can copy euro amounts instead of formatting cents itself.
+ */
+export function withEuros<T>(value: T): T {
+  if (Array.isArray(value)) return value.map((v) => withEuros(v)) as T;
+  if (value === null || typeof value !== "object") return value;
+
+  const out: Record<string, unknown> = {};
+  for (const [key, v] of Object.entries(value)) {
+    out[key] = withEuros(v);
+    if (key.endsWith("Cents") && typeof v === "number") out[`${key.slice(0, -5)}Eur`] = euroStrings(v);
+  }
+  return out as T;
+}

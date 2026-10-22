@@ -1,9 +1,14 @@
 // Runs check_invoice's logic on all 40 invoices and compares against the
 // answer key (docs/phase0-findings.md). Run with: npx tsx scripts/checks-check.ts
 // (console.log is fine here: this script is not the MCP server.)
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { listInvoiceFiles } from "../src/parsers/index.js";
 import { checkInvoice } from "../src/checks/index.js";
-import { formatCents } from "../src/lib/money.js";
+import { getRunTotals } from "../src/checks/runTotals.js";
+import { getDecisions, recordDecision } from "../src/lib/decisions.js";
+import { formatCents, withEuros } from "../src/lib/money.js";
 import type { CheckResult } from "../src/checks/types.js";
 
 // Expected dispute totals incl. VAT, in cents. Every other invoice: 0.
@@ -109,6 +114,74 @@ check(
 
 const unreconciled = results.filter((r) => !r.reconciles);
 check("every invoice reconciles", unreconciled.length === 0, unreconciled.map((r) => r.file).join(", "));
+
+// The review list shows this as the net of the pair: billed − credited.
+check(
+  "2026-0049 corrected total = billed − credited = € 168,58",
+  r0049.correctedTotalCents === 16858 && r0049.billedTotalCents - r0049.creditedCents === 16858,
+  formatCents(r0049.correctedTotalCents),
+);
+
+const r0019 = results.find((r) => r.file === "j-F26-0019.txt")!;
+const dup = r0019.findings.find((f) => f.rule === "4.8");
+check(
+  'Dutch dates: F26-0019 "27 januari 2026", original F26-0001 "2 januari 2026"',
+  r0019.invoiceDateNl === "27 januari 2026" && dup?.originalInvoiceNo === "F26-0001" && dup.originalInvoiceDateNl === "2 januari 2026",
+  `${r0019.invoiceDateNl} / ${dup?.originalInvoiceNo} ${dup?.originalInvoiceDateNl}`,
+);
+
+const r0038 = results.find((r) => r.file === "h-2026-0038.txt")!;
+check('Dutch execution date: 2026-0038 "17 december 2025"', r0038.executionDateNl === "17 december 2025", r0038.executionDateNl);
+
+// --- get_run_totals ------------------------------------------------------------------
+const totals = getRunTotals();
+check(`run totals grand total ${formatCents(EXPECTED_GRAND_TOTAL)}`, totals.grandDisputeTotalCents === EXPECTED_GRAND_TOTAL, formatCents(totals.grandDisputeTotalCents));
+const { dispute, hold, approve } = totals.verdictCounts;
+check("proposed verdicts 20 dispute / 3 hold / 17 approve", dispute === 20 && hold === 3 && approve === 17, `${dispute}/${hold}/${approve}`);
+const heldFiles = totals.invoices.filter((i) => i.proposedVerdict === "hold").map((i) => i.file).sort();
+check("held invoices are exactly the expected holds", heldFiles.join() === Object.keys(EXPECTED_HOLDS).sort().join(), heldFiles.join(", "));
+const supplierSum = totals.perSupplier.reduce((sum, s) => sum + s.disputeTotalCents, 0);
+check("supplier totals add up to the grand total", supplierSum === totals.grandDisputeTotalCents, formatCents(supplierSum));
+const euros = withEuros(totals).grandDisputeTotalEur;
+check(
+  'euro strings "€ 3.412,47" / "€3,412.47" / "3412.47"',
+  euros.nl === "€ 3.412,47" && euros.en === "€3,412.47" && euros.csv === "3412.47",
+  JSON.stringify(euros),
+);
+
+// --- record_decision / get_decisions (temp file, never the real state/) ------------------
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "oostervelde-"));
+const log = path.join(tmpDir, "decisions.json");
+check("no log file → no decisions", getDecisions(log).length === 0);
+recordDecision({ file: "h-2026-0058.txt", verdict: "dispute", reason: "first" }, log);
+recordDecision({ file: "w-DW26-013.txt", verdict: "hold", reason: "waiting for housing officer" }, log);
+recordDecision({ file: "h-2026-0058.txt", verdict: "approve", reason: "second trip was real", decidedBy: "Test" }, log);
+const stored = JSON.parse(fs.readFileSync(log, "utf8"));
+check("log is append-only (3 entries, first kept)", stored.length === 3 && stored[0].reason === "first", String(stored.length));
+const latest = getDecisions(log).find((d) => d.file === "h-2026-0058.txt");
+check(
+  "latest decision wins, 1 earlier counted",
+  latest?.verdict === "approve" && latest.decidedBy === "Test" && latest.earlierDecisions === 1,
+  JSON.stringify(latest),
+);
+check("decidedBy defaults to Sanne", stored[0].decidedBy === "Sanne", stored[0].decidedBy);
+let unknownRejected = false;
+try {
+  recordDecision({ file: "../package.json", verdict: "approve", reason: "x" }, log);
+} catch {
+  unknownRejected = true;
+}
+check("unknown invoice file is rejected", unknownRejected && JSON.parse(fs.readFileSync(log, "utf8")).length === 3);
+const corrupt = path.join(tmpDir, "corrupt.json");
+fs.writeFileSync(corrupt, '{"not": "an array"}');
+let corruptRejected = false;
+try {
+  recordDecision({ file: "h-2026-0058.txt", verdict: "approve", reason: "x" }, corrupt);
+} catch {
+  corruptRejected = true;
+}
+check("a non-array log is refused and left unchanged", corruptRejected && fs.readFileSync(corrupt, "utf8") === '{"not": "an array"}');
+fs.rmSync(tmpDir, { recursive: true, force: true });
 
 console.log(failures === 0 ? "\nAll checks passed." : `\n${failures} check(s) FAILED.`);
 process.exitCode = failures === 0 ? 0 : 1;

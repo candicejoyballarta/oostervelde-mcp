@@ -50,7 +50,11 @@ Sanne's current process is taken from the task audit call of 3 Feb 2026 ([data/t
 - **Duplicate invoices (F26-0001 and F26-0019, same work order WO-26-1013): the earlier one is the original, the later one is disputed in full** — 4.8 (one invoice per work order). Sanne checks invoices one by one and never compares them; last year a Jansen duplicate of almost €2,000.00 was paid and only came out at the year-end audit.
 - **Credit note (*creditfactuur*) 2026-C003 is netted against 2026-0049** — 4.8. Same as Sanne's current practice.
 - **Unknown work order (WO-26-1099 on DW26-013) → hold** — 4.9 (not paid until the order is confirmed). Same as Sanne's practice: on hold until the housing officer confirms the job.
-- **Dispute text for contractors is in Dutch by default, with an English version when Sanne asks for it** — the contract and all four contractors are Dutch, but some contractors may be more comfortable in English. Sanne chooses per dispute.
+- **Contractor letters are in Dutch; everything else (review list, CSV, summaries) is in English** — the contract and all four contractors are Dutch, so the letters quote the Dutch contract text verbatim; the review list shows each Dutch quote with its English translation and gives a one-line English gist under each letter. Dates in letters are written out in Dutch ("27 januari 2026"), from `invoiceDateNl` in `check_invoice`.
+- **Proposed verdict rule (in code, `get_run_totals`)**: any hold finding → hold; else any dispute finding → dispute; else approve. Deterministic, so the same invoices always get the same proposal; Claude doesn't decide it.
+- **Letters state both the billed and the correct invoice total (incl. VAT)** — VAT is rounded per rate over the whole invoice, so a single finding's incl.-VAT amount can differ by a cent from "excl. × rate" (2026-0058: € 56,20, not € 56,19). Stating "gefactureerd totaal" and "juist totaal" makes the dispute the difference of two totals the contractor can verify, so a one-cent rounding difference can't be disputed.
+- **Duplicate letters ask for a credit note** — the later invoice isn't paid, and the contractor is asked to cancel it with a credit note referring to it (4.8), so their books match ours.
+- **All amounts in the review list come from tool output** — every `…Cents` value has `…Eur` strings next to it (`nl`, `en`, `csv`); the skill copies them and never calculates, rounds or formats. `scripts/review-list-check.ts` fails on any euro amount in the output that isn't in tool output.
 
 ### Questions sent to MSTR (22 Oct 2026)
 
@@ -67,13 +71,16 @@ Status: **awaiting reply.** Until then I use the default shown.
 
 Sanne in the audit call: "I'm the one who signs off. I'm not going to approve forty invoices on a computer's word."
 
-- **The solution only proposes verdicts (approve / dispute / hold); Sanne makes every final decision.** Planned: no verdict logic exists yet.
-- **No tool can send anything to a contractor; nothing leaves without her.** True now: every current tool only reads local files. This stays a design rule for all planned tools.
-- **Always goes to Sanne as "hold"**: built in `check_invoice` for unknown work orders, under-billed VAT, a work order with another supplier or address, a unit that can't be converted, and a home exactly two years old. Planned: holds for findings that depend on an open interpretation question (e.g. the unit-conversion rounding on 2026-0057 is currently disputed with the default).
-- **Every flag shows its evidence**: built in `check_invoice`. Each finding has the line, the article number, billed vs expected, and evidence lines (calculations and work-order facts). Planned: the skill shows the article's Dutch text + English translation next to it (available via `get_contract_rule`). She needs "the line, the rule, and the number", because contractors push back on anything less.
-- **Every line is checked, whatever the amount** (Planned). Today Sanne skips the work-order export when "the amount is small"; the tool does the lookup she skips, but the verdict stays hers.
-- **Dispute text drafted for her to send** (Planned). Writing the emails to contractors takes her longer than finding the problem. The solution drafts the text; she reviews and sends it herself.
-- **Overrides** (Planned): a `record_decision` tool that logs her verdict + reason, so overrides are kept and can later become rule clarifications.
+- **The solution only proposes verdicts (approve / dispute / hold); Sanne makes every final decision.** `get_run_totals` gives the proposed verdict per invoice; the review list labels every total and verdict "proposed" and opens with "How to use this list" (proposed only; you decide; tell me your decision and I'll record it).
+- **Every dispute and hold is labelled**:
+  - *Rule-based, ready to send*: the rule applies directly.
+  - *Needs your judgement*: every hold, plus disputes that rest on an interpretation: 2026-0057 (unit-conversion rounding), 2026-0058 (one-cent VAT rounding), B-26-0140 (off-list item; an approval may exist outside the work-order export) and F26-0019 (duplicate; the earlier invoice is treated as the original). Each says why in a "Why judgement" line. This replaces the earlier plan to put open-question findings on hold: they keep their default amount but are flagged for her.
+- **Her decisions are logged, not overwritten**: `record_decision` appends `{file, verdict, reason, decidedBy, decidedAt}` to `state/decisions.json` (git-ignored, append-only), and only when she explicitly states a decision. `get_decisions` returns her latest decision per invoice; the review list then shows "Sanne decided … on …: …" next to the proposed verdict, plus a "Sanne's decisions" table under the header. Overrides are kept and can later become rule clarifications.
+- **No tool can send anything to a contractor; nothing leaves without her.** There is no send tool; every tool reads local files except `record_decision`, which only writes the local log. Letters are marked "CONCEPT, pas versturen na akkoord van Sanne Verbeek".
+- **Always goes to Sanne as "hold"**: built in `check_invoice` for unknown work orders, under-billed VAT, a work order with another supplier or address, a unit that can't be converted, and a home exactly two years old. Holds get no letter; instead a "What needs confirming" note, and the expected amount shows as "not determined (on hold)".
+- **Every flag shows its evidence**: each finding has the line, the article (Dutch quote + English translation), billed vs expected, the amounts excl./incl. VAT and the evidence lines. She needs "the line, the rule, and the number", because contractors push back on anything less.
+- **Every line is checked, whatever the amount.** Today Sanne skips the work-order export when "the amount is small"; the tool does the lookup she skips, but the verdict stays hers.
+- **Dispute letters drafted for her to send.** Writing the emails takes her longer than finding the problem, so each dispute has a Dutch draft letter in the review list; she reviews and sends it herself.
 
 ## What changed along the way
 
@@ -97,16 +104,15 @@ Built so far:
 - parsers for all four supplier layouts into one JSON shape, with self-checks
 - lookup tools `get_price` (with indexation), `get_work_order`, `get_contract_rule` and `find_duplicates`
 - `check_invoice`: rule checks for 4.1–4.9 plus the invoice's own arithmetic, returning findings and a corrected invoice
-- three test scripts (`parse-all.ts`, `lookups-check.ts`, `checks-check.ts`); `checks-check.ts` matches all 40 dispute totals of the Phase 0 answer key (€3,412.47 in total)
+- `get_run_totals` (proposed verdicts + totals), `record_decision` and `get_decisions`
+- the Claude skill `.claude/skills/oostervelde-invoice-review/` with templates for the review list, the CSV and the Dutch dispute letters
+- the full run on all 40 invoices: `output/review-list.md` and `output/review-list.csv`
+- four test scripts (`parse-all.ts`, `lookups-check.ts`, `checks-check.ts`, `review-list-check.ts`); `checks-check.ts` matches all 40 dispute totals of the Phase 0 answer key (€3,412.47 in total) and the 20 / 3 / 17 proposed verdicts
 
 Not built yet:
 
-- **Verdicts** (approve / dispute / hold). `check_invoice` only returns findings; the skill proposes the verdict and Sanne decides.
 - **Untested branches.** The partial-credit-note, exactly-2-years and unknown-unit-mismatch branches have no examples in the data and are untested.
-- **Dispute text drafts** for contractors: Dutch by default, English on Sanne's request.
-- **`record_decision`** tool.
-- **The Claude skill.**
-- **Full run on all 40 invoices + review list for Sanne.**
+- **English versions of the letters** if a contractor asks for one (letters are Dutch only for now).
 - **Comparison with Sanne's 10 verdicts** (`data/reference/sanne-verdicts.csv`) by the solution; so far only done by hand in Phase 0.
 - **README with a 10-minute setup.**
 - **Video.**

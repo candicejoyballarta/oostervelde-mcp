@@ -10,6 +10,9 @@ build/
 .env.*
 !.env.example
 
+# Sanne's decision log (runtime data)
+state/
+
 # Logs
 logs/
 *.log
