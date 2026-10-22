@@ -38,6 +38,8 @@ The invoice is dated 12 January 2026, so Sanne checked the prices against the ne
 - Line 1 (Radiator 600x1200 type 22): billed € 596,50, at 2025 prices € 578,00 → € 22,38 incl. VAT
 - Line 2 (Arbeid installateur): billed € 181,11, at 2025 prices € 175,50 → € 6,79 incl. VAT
 
+Line amounts include a −€ 0,01 rounding adjustment so they add up to the invoice difference (VAT is rounded over the whole invoice, as on the invoice itself).
+
 Together: **€ 29,17 incl. VAT** to dispute.
 
 ### B-26-0102 (Bosman): verdict only (amount differs)
@@ -58,7 +60,7 @@ Together: **€ 29,17 incl. VAT** to dispute.
 >
 > *As of 1 January 2026, the prices are indexed once by 3.2 percent, rounded to whole cents per unit. The date on which the work was carried out is decisive, not the invoice date. Work carried out up to and including 31 December 2025 is invoiced at the 2025 prices.*
 
-Right rule, wrong amount. The work order is regular, so under 4.3 no call-out fee is paid; Sanne caught that. She reclaimed € 45,00 + 21% VAT = € 54,45, using € 45,00, the **2025** price of B05. The work was done on 12 January 2026, so the indexed 2026 price applies (4.2): 45.00 × 1.032 = 46.44 → 46.44 (work done 2026-01-12, 2026 price applies). The fee billed and disputed is € 46,44, which is € 56,19 incl. VAT.
+Right rule, wrong amount. The work order is regular, so under 4.3 no call-out fee is paid; Sanne caught that. She reclaimed € 45,00 + 21% VAT = € 54,45, using € 45,00, the **2025** price of B05. The indexed price applies (4.2): € 45,00 + 3.2% = € 46,44 (work done 12 January 2026, so the 2026 price applies). The fee billed and disputed is € 46,44, which is € 56,19 incl. VAT.
 
 Difference: Sanne € 54,45, proposed **€ 56,19**.
 
@@ -92,16 +94,16 @@ Sanne saw meerwerk of € 385,00, above the € 250,00 that needs no approval, a
 
 Same verdict, same rule: painter labour on a home older than two years gets 9% VAT. Sanne didn't state an amount; the check adds it: **€ 60,68** of VAT charged too much.
 
-- WO-26-1008 built: 1968, work done 2026-01-15 → 58 years
+- WO-26-1008 built: 1968, work done 15 January 2026 → 58 years
 - W01 is painter labour on a home older than two years → 9%
 - € 505,70 × (21% − 9%) = € 60,68 VAT too much
 
 ## Where Sanne was right
 
 - **5 approvals we agree with:** 2026-0031, DW26-004, F26-0007, F26-0012, B-26-0097.
-- **B-26-0102:** the right rule (Article 4.3): Call-out fee charged on a regular (regulier) work order; only emergency (spoed) work orders get call-out fees.
-- **2026-0044:** the right rule (Article 4.4): 8 labour hours billed, but only 6 are allowed on work order WO-26-1007. Her "8 uur gefactureerd, max 6. 2 uur terugvragen" works out to 2 h × € 60,37 (H02, contract price) = € 120,74 + 21% VAT = € 146,10, exactly the proposed amount.
-- **DW26-011:** the right rule (Article 4.6): VAT charged at 21% where 9% applies.
+- **B-26-0102:** she applied the right rule (Article 4.3): no call-out fee on a regular work order.
+- **2026-0044:** she applied the right rule (Article 4.4): hours above the work order's maximum are only paid with an MU approval. Her "8 uur gefactureerd, max 6. 2 uur terugvragen" works out to 2 h × € 60,37 (H02, contract price) = € 120,74 + 21% VAT = € 146,10, exactly the proposed amount.
+- **DW26-011:** she applied the right rule (Article 4.6): painter labour on a home older than two years gets 9% VAT.
 
 ## What this suggests for Sanne's process
 

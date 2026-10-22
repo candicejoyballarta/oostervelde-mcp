@@ -52,6 +52,19 @@ function enDate(iso: string): string {
   return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 }
 
+/** Rewrites every ISO date in copied tool text as an English long date. */
+const englishDates = (text: string) => text.replace(/\b\d{4}-\d{2}-\d{2}\b/g, enDate);
+
+// Contract 4.2: prices indexed once by "3,2 procent" (money.ts indexPrice2026 does the maths).
+const INDEXATION = "3.2%";
+
+// The rule Sanne applied, as a short phrase for "Where Sanne was right".
+const RULE_PHRASES: Record<string, string> = {
+  "4.3": "no call-out fee on a regular work order",
+  "4.4": "hours above the work order's maximum are only paid with an MU approval",
+  "4.6": "painter labour on a home older than two years gets 9% VAT",
+};
+
 const plusVat = (excl: number, rate: number) => excl + roundDiv(excl * rate, 100);
 
 // --- Sanne's amount, read from her note --------------------------------------------------
@@ -164,6 +177,17 @@ function sentence(text: string, marker: string): string {
 
 const disputes = (r: Row): Finding[] => r.ours.findings.filter((f) => f.kind === "dispute");
 
+/** The note for check_invoice's one-cent rounding adjustment, from the finding's own evidence line. */
+function roundingNote(findings: Finding[]): string[] {
+  const amount = findings.flatMap((f) => f.evidence).map((e) => e.match(/^Rounding: (\S+ [\d.,]+) added/)?.[1]).find(Boolean);
+  if (!amount) return [];
+  return [
+    "",
+    `Line amounts include a ${amount.replace(/^-/, "−")} rounding adjustment so they add up to the invoice difference ` +
+      "(VAT is rounded over the whole invoice, as on the invoice itself).",
+  ];
+}
+
 const EXPLANATIONS: Record<string, { articles: string[]; why: (r: Row) => string }> = {
   "h-2026-0038.txt": {
     articles: ["4.2"],
@@ -176,6 +200,7 @@ const EXPLANATIONS: Record<string, { articles: string[]; why: (r: Row) => string
         ...disputes(r).map(
           (f) => `- Line ${f.lineNo} (${f.lineDescription}): billed ${formatCents(f.billedCents)}, at 2025 prices ${formatCents(f.expectedCents)} → ${formatCents(f.disputeInclVatCents)} incl. VAT`,
         ),
+        ...roundingNote(disputes(r)),
         "",
         `Together: **${formatCents(r.ours.disputeTotalCents)} incl. VAT** to dispute.`,
       ].join("\n"),
@@ -221,7 +246,8 @@ const EXPLANATIONS: Record<string, { articles: string[]; why: (r: Row) => string
       return [
         `Right rule, wrong amount. The work order is regular, so under 4.3 no call-out fee is paid; Sanne caught that. ` +
           `She reclaimed ${r.sanne.how}, using ${formatCents(price.price2025Cents)}, the **2025** price of ${line.code}. ` +
-          `The work was done on ${enDate(r.invoice.executionDate)}, so the indexed 2026 price applies (4.2): ${price.calculation}. ` +
+          `The indexed price applies (4.2): ${formatCents(price.price2025Cents)} + ${INDEXATION} = ${formatCents(price.price2026Cents)} ` +
+          `(work done ${enDate(r.invoice.executionDate)}, so the 2026 price applies). ` +
           `The fee billed and disputed is ${formatCents(f.billedCents)}, which is ${formatCents(f.disputeInclVatCents)} incl. VAT.`,
         "",
         `Difference: Sanne ${formatCents(r.sanne.cents)}, proposed **${formatCents(r.ours.disputeTotalCents)}**.`,
@@ -236,7 +262,7 @@ const EXPLANATIONS: Record<string, { articles: string[]; why: (r: Row) => string
         `Same verdict, same rule: painter labour on a home older than two years gets 9% VAT. Sanne didn't state an amount; ` +
           `the check adds it: **${formatCents(f.disputeInclVatCents)}** of VAT charged too much.`,
         "",
-        ...f.evidence.map((e) => `- ${e}`),
+        ...f.evidence.map((e) => `- ${englishDates(e)}`),
       ].join("\n");
     },
   },
@@ -309,7 +335,9 @@ md.push(
       r.sanne.kind === "implied" && r.agreesOnAmount
         ? ` Her "${r.note}" works out to ${r.sanne.how}, exactly the proposed amount.`
         : "";
-    return `- **${r.invoiceNo}:** the right rule (Article ${f.rule}): ${f.summary}${amount}`;
+    const phrase = RULE_PHRASES[f.rule];
+    if (!phrase) fail(`no rule phrase for Article ${f.rule} (${r.invoiceNo})`);
+    return `- **${r.invoiceNo}:** she applied the right rule (Article ${f.rule}): ${phrase}.${amount}`;
   }),
   "",
 );
