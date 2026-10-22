@@ -1,7 +1,7 @@
 import { formatCents } from "../lib/money.js";
 import type { CheckContext, RuleFinding } from "./types.js";
 
-const FREE_LIMIT_CENTS = 25000; // EUR 250,00 excl. VAT per work order
+export const FREE_LIMIT_CENTS = 25000; // EUR 250,00 excl. VAT per work order
 
 /**
  * 4.5: meerwerk (extra work) up to EUR 250,00 needs no approval. Above that it

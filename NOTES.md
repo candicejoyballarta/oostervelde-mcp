@@ -76,6 +76,7 @@ Sanne in the audit call: "I'm the one who signs off. I'm not going to approve fo
   - *Rule-based, ready to send*: the rule applies directly.
   - *Needs your judgement*: every hold, plus disputes that rest on an interpretation: 2026-0057 (unit-conversion rounding), 2026-0058 (one-cent VAT rounding), B-26-0140 (off-list item; an approval may exist outside the work-order export) and F26-0019 (duplicate; the earlier invoice is treated as the original). Each says why in a "Why judgement" line. This replaces the earlier plan to put open-question findings on hold: they keep their default amount but are flagged for her.
 - **Her decisions are logged, not overwritten**: `record_decision` appends `{file, verdict, reason, decidedBy, decidedAt}` to `state/decisions.json` (git-ignored, append-only), and only when she explicitly states a decision. `get_decisions` returns her latest decision per invoice; the review list then shows "Sanne decided … on …: …" next to the proposed verdict, plus a "Sanne's decisions" table under the header. Overrides are kept and can later become rule clarifications.
+- **Recording a decision always needs a human click.** `.claude/settings.json` pre-allows the read/check tools (and edits under `output/`), so a review run doesn't stop for permission prompts; `record_decision` is deliberately left out, so Claude Code asks before every decision is written.
 - **No tool can send anything to a contractor; nothing leaves without her.** There is no send tool; every tool reads local files except `record_decision`, which only writes the local log. Letters are marked "CONCEPT, pas versturen na akkoord van Sanne Verbeek".
 - **Always goes to Sanne as "hold"**: built in `check_invoice` for unknown work orders, under-billed VAT, a work order with another supplier or address, a unit that can't be converted, and a home exactly two years old. Holds get no letter; instead a "What needs confirming" note, and the expected amount shows as "not determined (on hold)".
 - **Every flag shows its evidence**: each finding has the line, the article (Dutch quote + English translation), billed vs expected, the amounts excl./incl. VAT and the evidence lines. She needs "the line, the rule, and the number", because contractors push back on anything less.
@@ -94,6 +95,7 @@ Sanne in the audit call: "I'm the one who signs off. I'm not going to approve fo
   - DW26-016: 30 m² × €7.43 billed as €232.90 instead of €222.90, €10.90 incl. VAT too high.
 
   Lesson: verify the invoice's own arithmetic, not just prices and rules.
+- **The review list is reproducible.** A fresh Claude Code session ran the skill end to end on all 40 invoices (~5–10 min) and produced output identical to the committed review list: same verdicts, labels, amounts and evidence. This shows the amounts come only from tools, not from the model's own arithmetic.
 - **Test design.** The parse-all script treats the two invoice arithmetic errors as *expected invoice errors* with their exact warning text. It fails on any unexpected warning (parser bug) AND when an expected warning disappears (broken self-check). I chose this over "keep failing" (a permanently red test hides new failures) and over "mark as passing" (could hide future bugs), because it separates "the invoice is wrong" from "my code is wrong".
 
 ## What isn't finished
@@ -107,12 +109,12 @@ Built so far:
 - `get_run_totals` (proposed verdicts + totals), `record_decision` and `get_decisions`
 - the Claude skill `.claude/skills/oostervelde-invoice-review/` with templates for the review list, the CSV and the Dutch dispute letters
 - the full run on all 40 invoices: `output/review-list.md` and `output/review-list.csv`
+- the comparison with Sanne's 10 verdicts, generated from the check code: `scripts/compare-sanne.ts` → `output/sanne-comparison.md` (8 of 10 agree on the verdict, 6 also on the amount)
 - four test scripts (`parse-all.ts`, `lookups-check.ts`, `checks-check.ts`, `review-list-check.ts`); `checks-check.ts` matches all 40 dispute totals of the Phase 0 answer key (€3,412.47 in total) and the 20 / 3 / 17 proposed verdicts
 
 Not built yet:
 
 - **Untested branches.** The partial-credit-note, exactly-2-years and unknown-unit-mismatch branches have no examples in the data and are untested.
 - **English versions of the letters** if a contractor asks for one (letters are Dutch only for now).
-- **Comparison with Sanne's 10 verdicts** (`data/reference/sanne-verdicts.csv`) by the solution; so far only done by hand in Phase 0.
 - **README with a 10-minute setup.**
 - **Video.**
