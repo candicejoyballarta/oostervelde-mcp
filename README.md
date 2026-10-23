@@ -145,7 +145,7 @@ state/               decisions.json once Sanne records a decision (git-ignored)
 ## Where to read more
 
 - [NOTES.md](NOTES.md):
-  - **Decisions and translations**: the Dutch terms relied on, every interpretation choice, open questions.
+  - **Decisions and translations**: the Dutch terms relied on, every interpretation choice, the questions asked to MSTR and the final decisions.
   - **Where Sanne decides**: proposed verdicts only, labels, the decision log, no send tool.
   - **What changed along the way**: what went wrong and what I changed.
   - **What isn't finished**.

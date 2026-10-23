@@ -27,10 +27,19 @@ output, say so in the output instead of computing it.
    verdict; show the proposed verdict next to it if it differs.
 4. **Label** every invoice whose verdict is dispute or hold:
    - **Needs your judgement**: every hold, plus disputes that rest on an interpretation in NOTES.md.
-     For now: 2026-0057 (unit-conversion rounding), 2026-0058 (one-cent VAT rounding),
-     B-26-0140 (off-list item; approval may exist outside the work-order export),
-     F26-0019 (duplicate; the earlier invoice is treated as the original).
+     These, with what their "Why judgement" line says:
+     - 2026-0057: unit conversion. Copper is billed per metre but priced per 25 m roll; the tool uses
+       the exact per-metre price (€ 167,70 ÷ 25, rounded once at the end). Decided: 4.2 rounds prices
+       per price-list unit, and the conversion only serves the comparison, so rounding it first would
+       create a price that isn't in the contract.
+     - 2026-0058: the incl.-VAT amount carries a one-cent rounding adjustment (VAT is rounded per rate
+       over the whole invoice); the rule itself applies directly.
+     - B-26-0140: off-list item; the check assumes approvals only exist in the work-order export.
+     - F26-0019: duplicate; the earlier invoice (F26-0001) is treated as the original.
    - **Rule-based, ready to send**: every other dispute; the rule applies directly.
+   - Under-billed VAT holds (2026-0061, DW26-015): in "What needs confirming", say holding is the
+     decision: the invoice needs a corrected version, but Oostervelde has nothing to reclaim, so it
+     isn't in the dispute total. Don't call any of these an open question; they're decided in NOTES.md.
 5. Write `output/review-list.md` and `output/review-list.csv`. Load the templates only now:
    - [references/review-list-format.md](references/review-list-format.md)
    - [references/dispute-letter-nl.md](references/dispute-letter-nl.md)

@@ -56,16 +56,16 @@ Sanne's current process is taken from the task audit call of 3 Feb 2026 ([data/t
 - **Duplicate letters ask for a credit note** — the later invoice isn't paid, and the contractor is asked to cancel it with a credit note referring to it (4.8), so their books match ours.
 - **All amounts in the review list come from tool output** — every `…Cents` value has `…Eur` strings next to it (`nl`, `en`, `csv`); the skill copies them and never calculates, rounds or formats. `scripts/review-list-check.ts` fails on any euro amount in the output that isn't in tool output.
 
-### Questions sent to MSTR (22 Oct 2026)
+### Questions asked to MSTR (22 Oct) and final decisions
 
-Status: **awaiting reply.** Until then I use the default shown.
+MSTR left these interpretation calls to me, 23 Oct. I kept all three defaults; if I change my mind, I'll note it here with the date.
 
 1. **VAT charged too low** — 2026-0061 bills plumbing at 9%; DW26-015 bills a 2025 new build at 9%.
-   Default: hold, request a corrected invoice, leave it out of the dispute total.
+   Decision: **hold**, request a corrected invoice, leave it out of the dispute total. The invoice is incorrect and needs a corrected version, but Oostervelde has nothing to reclaim, so it isn't part of the dispute total.
 2. **Rounding in unit conversion** — 2026-0057 bills copper per metre; the price list prices it per 25 m roll. Exact €6.708/m gives a dispute of €21.68; rounded €6.71/m gives €21.60.
-   Default: exact price, €21.68.
+   Decision: **exact per-metre price, €21.68.** 4.2 rounds prices per price-list unit (here the roll); the conversion to metres only serves the comparison, so rounding it first would create a price that isn't in the contract.
 3. **Dispute total incl. or excl. VAT?**
-   Default: show both; the headline total is incl. VAT.
+   Decision: **incl. VAT as the headline total; every finding shows excl. VAT too.** As far as I know, a housing association generally can't reclaim VAT on maintenance, so incl. VAT is what Oostervelde would actually overpay.
 
 ## Where Sanne decides
 
@@ -74,7 +74,7 @@ Sanne in the audit call: "I'm the one who signs off. I'm not going to approve fo
 - **The solution only proposes verdicts (approve / dispute / hold); Sanne makes every final decision.** `get_run_totals` gives the proposed verdict per invoice; the review list labels every total and verdict "proposed" and opens with "How to use this list" (proposed only; you decide; tell me your decision and I'll record it).
 - **Every dispute and hold is labelled**:
   - *Rule-based, ready to send*: the rule applies directly.
-  - *Needs your judgement*: every hold, plus disputes that rest on an interpretation: 2026-0057 (unit-conversion rounding), 2026-0058 (one-cent VAT rounding), B-26-0140 (off-list item; an approval may exist outside the work-order export) and F26-0019 (duplicate; the earlier invoice is treated as the original). Each says why in a "Why judgement" line. This replaces the earlier plan to put open-question findings on hold: they keep their default amount but are flagged for her.
+  - *Needs your judgement*: every hold, plus disputes that rest on an interpretation: 2026-0057 (unit-conversion rounding), 2026-0058 (one-cent VAT rounding), B-26-0140 (off-list item; an approval may exist outside the work-order export) and F26-0019 (duplicate; the earlier invoice is treated as the original). Each says why in a "Why judgement" line. This replaces the earlier plan to put interpretation-based findings on hold: they keep their decided amount but are flagged for her.
 - **Her decisions are logged, not overwritten**: `record_decision` appends `{file, verdict, reason, decidedBy, decidedAt}` to `state/decisions.json` (git-ignored, append-only), and only when she explicitly states a decision. `get_decisions` returns her latest decision per invoice; the review list then shows "Sanne decided … on …: …" next to the proposed verdict, plus a "Sanne's decisions" table under the header. Overrides are kept and can later become rule clarifications.
 - **Recording a decision always needs a human click.** `.claude/settings.json` pre-allows the read/check tools (and edits under `output/`), so a review run doesn't stop for permission prompts; `record_decision` is deliberately left out, so Claude Code asks before every decision is written.
 - **No tool can send anything to a contractor; nothing leaves without her.** There is no send tool; every tool reads local files except `record_decision`, which only writes the local log. Letters are marked "CONCEPT, pas versturen na akkoord van Sanne Verbeek".

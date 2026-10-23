@@ -75,7 +75,7 @@ Amounts are excl. VAT unless marked. "Incl." = amount + VAT at the line's rate.
 | B-26-0140 | 1020 | "Vogelwering" not on price list, not meerwerk | 4.7 | 58.50 ⚠ | 70.79 |
 | B-26-0144 | 1029 | Roofer labour €66.00/h, list €63.98 (7 h) | 4.1/4.2 | 14.14 | 17.11 |
 
-**Draft total to dispute: €3,412.47 incl. VAT** (depends on the open questions in section 6).
+**Draft total to dispute: €3,412.47 incl. VAT** (rests on the interpretation calls in section 6, decided 23 Oct).
 
 > Method (22 Oct): incl.-VAT dispute = billed invoice total − corrected invoice total, with VAT rounded per rate
 > over the whole invoice (as the suppliers do). This equals "excl. × 1.21 rounded" everywhere except 2026-0058:
@@ -117,7 +117,11 @@ exactly €46.44 + €9.75. Net = correct → approve both as a pair (4.8).
 | F26-0012 | approve | approve | — |
 | B-26-0097 | approve | approve | — |
 
-## 6. Interpretation decisions so far (⚠ = open question)
+## 6. Interpretation decisions (⚠ = interpretation call)
+
+> Update 23 Oct: MSTR left the unit-conversion and under-billed-VAT calls (and incl./excl. VAT) to me;
+> the defaults below are now final. Reasoning in [NOTES.md](../NOTES.md#questions-asked-to-mstr-22-oct-and-final-decisions).
+> The off-list item stays an interpretation for Sanne.
 
 - VAT rounding: per rate per invoice (matches how all four suppliers invoice).
 - Dispute amounts reported excl. VAT and incl. VAT; the dispute total is incl. VAT, since that's what would be paid.

@@ -28,8 +28,8 @@ Proposed verdicts: 20 dispute · 3 hold · 17 approve
 Billed € 643,09 · Disputed € 26,23 incl. VAT
 
 Why judgement: the copper is billed per metre but priced per 25 m roll. The tool uses the exact per-metre price
-(€ 167,70 ÷ 25, rounded once at the end); rounding the per-metre price first would give a slightly lower dispute.
-That choice is an open question to MSTR; the exact price is the current default.
+(€ 167,70 ÷ 25, rounded once at the end). Decided: 4.2 rounds prices per price-list unit, and the conversion only
+serves the comparison, so rounding it first would create a price that isn't in the contract.
 
 #### Line 1: Koperen leiding 15 mm
 
@@ -128,7 +128,7 @@ Billed € 456,70 · Disputed € 0,00 incl. VAT
 #### What needs confirming
 
 - Ask Hoekstra for a corrected invoice with 21% VAT on lines 1 and 2: the 9% rate is only for painter labour, and this is plumbing work.
-- Whether under-billed VAT is held or paid as billed is an open question to MSTR; holding it is the current default.
+- Holding is the decision: the invoice needs a corrected version, but Oostervelde has nothing to reclaim, so it isn't in the dispute total.
 
 ### DW26-013 · De Wit · hold
 
@@ -170,7 +170,7 @@ Billed € 1.015,77 · Disputed € 0,00 incl. VAT
 #### What needs confirming
 
 - Ask De Wit for a corrected invoice with 21% VAT on lines 1 and 2: the home was built in 2025, so it is not older than two years and the 9% rate doesn't apply.
-- Whether under-billed VAT is held or paid as billed is an open question to MSTR; holding it is the current default.
+- Holding is the decision: the invoice needs a corrected version, but Oostervelde has nothing to reclaim, so it isn't in the dispute total.
 
 ### B-26-0140 · Bosman · dispute
 
