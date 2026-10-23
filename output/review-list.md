@@ -1,6 +1,6 @@
 # Invoice review list: Woonkring Oostervelde
 
-Run date: 2026-10-22 · 40 invoices checked against Article 4 of the framework contract
+Run date: 2026-10-23 · 40 invoices checked against Article 4 of the framework contract
 
 ## Proposed totals
 
