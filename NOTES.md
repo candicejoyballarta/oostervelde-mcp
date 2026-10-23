@@ -116,5 +116,6 @@ Not built yet:
 
 - **Untested branches.** The partial-credit-note, exactly-2-years and unknown-unit-mismatch branches have no examples in the data and are untested.
 - **English versions of the letters** if a contractor asks for one (letters are Dutch only for now).
+- **"Needs your judgement" reasons are listed per invoice in SKILL.md.** That works for the January invoices, but not for new data: a new invoice that rests on an interpretation wouldn't get the label. Next step: return a judgement reason from `check_invoice` with each finding, so the code decides it.
 - **README with a 10-minute setup.**
 - **Video.**
